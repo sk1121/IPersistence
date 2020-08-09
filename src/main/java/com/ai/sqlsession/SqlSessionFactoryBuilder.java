@@ -9,13 +9,15 @@ import java.io.InputStream;
 
 /**
  * @author songkang
- * @Date 2020/8/7
+ * @date 2020/8/7
  */
 public class SqlSessionFactoryBuilder {
 
     public SqlSessionFactory builder(InputStream in) throws PropertyVetoException, DocumentException {
         XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder();
         Configuration configuration = xmlConfigBuilder.parseConfig(in);
-        return null;
+
+        DefaultSqlSessionFactory sqlSessionFactory = new DefaultSqlSessionFactory(configuration);
+        return sqlSessionFactory;
     }
 }
