@@ -8,7 +8,9 @@ import java.util.List;
  */
 public interface SqlSession {
 
-    <E> List<E> selectList(String statementId,Object... params);
+    <E> List<E> selectList(String statementId,Object... params) throws Exception;
 
-    <E> E selectOne(String statementId,Object... params);
+    <E> E selectOne(String statementId,Object... params) throws Exception;
+
+    <T> T getMapper(Class<T> mapperClass);
 }

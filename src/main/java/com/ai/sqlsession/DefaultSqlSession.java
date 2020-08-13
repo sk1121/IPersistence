@@ -3,6 +3,9 @@ package com.ai.sqlsession;
 import com.ai.pojo.Configuration;
 import com.ai.pojo.MappedStatement;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.List;
 
 /**
@@ -17,17 +20,29 @@ public class DefaultSqlSession implements SqlSession {
         this.configuration = configuration;
     }
 
-    public <E> List<E> selectList(String statementId,Object... params) {
-        SimpleExecutor simpleExecutor = new SimpleExecutor();
+    public <E> List<E> selectList(String statementId,Object... params) throws Exception {
+        Executor simpleExecutor = new SimpleExecutor();
         MappedStatement mappedStatement = configuration.getMap().get(statementId);
         return simpleExecutor.query(configuration, mappedStatement, params);
     }
 
-    public <E> E selectOne(String statementId,Object... params) {
+    public <E> E selectOne(String statementId,Object... params) throws Exception {
         List<Object> list = selectList(statementId, params);
         if (list.size() == 1) {
             return (E) list.get(0);
         }
         throw new RuntimeException("数据不存在或者存在多条");
+    }
+
+    @Override
+    public <T> T getMapper(Class<T> mapperClass) {
+        Object o = Proxy.newProxyInstance(DefaultSqlSession.class.getClassLoader(), new Class[]{mapperClass}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+
+                return null;
+            }
+        });
+        return (T) o;
     }
 }
