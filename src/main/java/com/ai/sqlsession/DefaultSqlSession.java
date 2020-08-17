@@ -39,8 +39,12 @@ public class DefaultSqlSession implements SqlSession {
         Object o = Proxy.newProxyInstance(DefaultSqlSession.class.getClassLoader(), new Class[]{mapperClass}, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-
-                return null;
+                String methodName = method.getName();
+                String className = method.getDeclaringClass().getName();
+                String statementId = className + "." + methodName;
+                Executor simpleExecutor = new SimpleExecutor();
+                MappedStatement mappedStatement = configuration.getMap().get(statementId);
+                return simpleExecutor.query(configuration, mappedStatement, args);
             }
         });
         return (T) o;
