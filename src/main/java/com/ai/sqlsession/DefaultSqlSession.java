@@ -5,7 +5,9 @@ import com.ai.pojo.MappedStatement;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -42,9 +44,11 @@ public class DefaultSqlSession implements SqlSession {
                 String methodName = method.getName();
                 String className = method.getDeclaringClass().getName();
                 String statementId = className + "." + methodName;
-                Executor simpleExecutor = new SimpleExecutor();
-                MappedStatement mappedStatement = configuration.getMap().get(statementId);
-                return simpleExecutor.query(configuration, mappedStatement, args);
+                Type genericReturnType = method.getGenericReturnType();
+                if (genericReturnType instanceof ParameterizedType) {
+                    return selectList(statementId, args);
+                }
+                return selectOne(statementId, args);
             }
         });
         return (T) o;
