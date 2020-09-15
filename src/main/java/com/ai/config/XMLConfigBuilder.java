@@ -48,7 +48,6 @@ public class XMLConfigBuilder {
         configuration.setDataSource(comboPooledDataSource);
 
         // 读取mapper.xml文件并解析
-        Map<String, MappedStatement> map = new HashMap<String, MappedStatement>();
         List<Element> mapperList = rootElement.selectNodes("//mapper");
         for (Element element : mapperList) {
             String resource = element.attributeValue("resource");
